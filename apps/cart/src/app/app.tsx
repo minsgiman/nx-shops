@@ -10,7 +10,7 @@ export const App = () => {
       <nx-shops-header />
       <Routes>
         <Route path="/" element={<CartCartPage />} />
-        <div>TEST1</div>
+        <div>TEST2</div>
       </Routes>
     </>
   );
