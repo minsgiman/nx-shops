@@ -42,6 +42,8 @@ runs:
               base: 'main',
             });
 
+            pulls.forEach(pull => console.log('pull ref:', pull.head.ref));
+
             const apps = pulls
               .map(pull => {
                 const matched = releaseRegex.exec(pull.head.ref);
