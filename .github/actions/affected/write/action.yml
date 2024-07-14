@@ -14,10 +14,10 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - name: Install Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version-file: '.nvmrc'
+#    - name: Install Node.js
+#      uses: actions/setup-node@v3
+#      with:
+#        node-version-file: '.nvmrc'
     - name: Setup artifact path
       shell: bash
       run: echo "ARTIFACT_PATH=${{ inputs.artifact_path }}" >> $GITHUB_ENV
@@ -80,6 +80,8 @@ runs:
         echo $AFFECTED_APPS > $ARTIFACT_PATH
 
         AFFECTED_APPS=$([[ -z $AFFECTED_APPS ]] && echo "Nothing" || echo "$AFFECTED_APPS")
+        echo "EXCLUDE LIST $EXCLUDES"
+        echo "AFFECTED APPS $AFFECTED_APPS"
         echo "EXCLUDES=$EXCLUDES" >> "$GITHUB_ENV"
         echo "AFFECTED_APPS=$AFFECTED_APPS" >> "$GITHUB_ENV"
     - name: Upload Artifact for affected

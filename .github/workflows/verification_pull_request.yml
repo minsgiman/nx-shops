@@ -16,10 +16,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
+#      - name: Install Node.js
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version-file: '.nvmrc'
 
       - name: PNPM install
         uses: ./.github/actions/setup/pnpm/install
@@ -36,10 +36,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
+#      - name: Install Node.js
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version-file: '.nvmrc'
 
       - name: PNPM install
         uses: ./.github/actions/setup/pnpm/install
@@ -56,10 +56,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
+#      - name: Install Node.js
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version-file: '.nvmrc'
 
       - name: PNPM install
         uses: ./.github/actions/setup/pnpm/install
