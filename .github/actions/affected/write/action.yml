@@ -14,10 +14,10 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - name: Install Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version-file: '.nvmrc'
+#    - name: Install Node.js
+#      uses: actions/setup-node@v3
+#      with:
+#        node-version-file: '.nvmrc'
     - name: Setup artifact path
       shell: bash
       run: echo "ARTIFACT_PATH=${{ inputs.artifact_path }}" >> $GITHUB_ENV
