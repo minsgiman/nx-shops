@@ -11,6 +11,7 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<CartCartPage />} />
         <div>TEST4</div>
+        <div>TEST100</div>
       </Routes>
     </>
   );
