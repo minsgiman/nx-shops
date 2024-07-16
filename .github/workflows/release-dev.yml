@@ -17,7 +17,7 @@ jobs:
         id: readAffected
         uses: ./.github/actions/affected/read
         with:
-          artifact_path: "${{ github.workspace }}/download-artifact"
+          artifact_path: "${{ github.workspace }}/env"
   release:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && (github.base_ref == 'develop' || startsWith(github.base_ref, 'release/'))
