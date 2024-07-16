@@ -58,5 +58,5 @@ runs:
 
         AFFECTED_LIST=$(echo "$AFFECTED_LIST" | jq -Rsc 'split("\n")[:-1]')
         echo "EXCLUDE_LIST $EXCLUDE_LIST"
-        echo "$AFFECTED LIST $AFFECTED_LIST"
+        echo "AFFECTED_LIST $AFFECTED_LIST"
         echo "AFFECTED=$AFFECTED_LIST" >> $GITHUB_OUTPUT
