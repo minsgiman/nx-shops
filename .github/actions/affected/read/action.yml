@@ -37,6 +37,8 @@ runs:
         # Get affected apps
         AFFECTED_APPS=$(cat $ARTIFACT_PATH/env)
 
+        echo "AFFECTED_APPS_TEST $AFFECTED_APPS"
+
         EXCLUDE_LIST="${{ inputs.exclude }}"
 
         # Convert exclude list to array (newline-separated)
@@ -47,6 +49,9 @@ runs:
         fi
 
         AFFECTED_LIST=$(echo "$AFFECTED_APPS" | jq -r '.[]')
+
+        echo "AFFECTED_APPS_JQ $AFFECTED_LIST"
+
         for EXCLUDE in "${EXCLUDE_ARRAY[@]}"; do
           AFFECTED_LIST=$(echo "$AFFECTED_LIST" | grep -v -x "$EXCLUDE")
         done
