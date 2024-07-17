@@ -15,14 +15,14 @@ env:
 
 jobs:
   job-conditions: &job-conditions
-    if: github.event.action === 'opened' ||
+    ${{ github.event.action === 'opened' ||
       github.event.action === 'synchronize' ||
       github.event.action === 'reopened' ||
-      (github.event.action === 'edited' && github.event.changes.base)
+      (github.event.action === 'edited' && github.event.changes.base }}
 
   lint:
     runs-on: ubuntu-latest
-    <<: *job-conditions
+    if: *job-conditions
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -43,7 +43,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    <<: *job-conditions
+    if: *job-conditions
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -64,7 +64,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    <<: *job-conditions
+    if: *job-conditions
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -84,7 +84,7 @@ jobs:
           pnpm nx affected --base=origin/$GIT_BASE_BRANCH --head=$GIT_HEAD_SHA -t build --parallel=3
   affected:
     runs-on: ubuntu-latest
-    <<: *job-conditions
+    if: *job-conditions
     steps:
       - name: Checkout
         uses: actions/checkout@v3
