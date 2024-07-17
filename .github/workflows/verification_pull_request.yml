@@ -16,10 +16,10 @@ env:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    if: ${{ github.event.action === 'opened' ||
-      github.event.action === 'synchronize' ||
-      github.event.action === 'reopened' ||
-      (github.event.action === 'edited' && github.event.changes.base }}
+    if: ${{ github.event.action == 'opened' ||
+      github.event.action == 'synchronize' ||
+      github.event.action == 'reopened' ||
+      (github.event.action == 'edited' && github.event.changes.base }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -40,10 +40,10 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    if: ${{ github.event.action === 'opened' ||
-      github.event.action === 'synchronize' ||
-      github.event.action === 'reopened' ||
-      (github.event.action === 'edited' && github.event.changes.base }}
+    if: ${{ github.event.action == 'opened' ||
+      github.event.action == 'synchronize' ||
+      github.event.action == 'reopened' ||
+      (github.event.action == 'edited' && github.event.changes.base }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -64,10 +64,10 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.event.action === 'opened' ||
-      github.event.action === 'synchronize' ||
-      github.event.action === 'reopened' ||
-      (github.event.action === 'edited' && github.event.changes.base }}
+    if: ${{ github.event.action == 'opened' ||
+      github.event.action == 'synchronize' ||
+      github.event.action == 'reopened' ||
+      (github.event.action == 'edited' && github.event.changes.base }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -87,10 +87,10 @@ jobs:
           pnpm nx affected --base=origin/$GIT_BASE_BRANCH --head=$GIT_HEAD_SHA -t build --parallel=3
   affected:
     runs-on: ubuntu-latest
-    if: ${{ github.event.action === 'opened' ||
-      github.event.action === 'synchronize' ||
-      github.event.action === 'reopened' ||
-      (github.event.action === 'edited' && github.event.changes.base }}
+    if: ${{ github.event.action == 'opened' ||
+      github.event.action == 'synchronize' ||
+      github.event.action == 'reopened' ||
+      (github.event.action == 'edited' && github.event.changes.base }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
