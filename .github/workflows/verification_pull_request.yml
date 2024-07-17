@@ -8,6 +8,10 @@ on:
 env:
   GIT_BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
   GIT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+  JOB_CONDITION: ${{ github.event.action == 'opened' ||
+    github.event.action == 'synchronize' ||
+    github.event.action == 'reopened' ||
+    (github.event.action == 'edited' && github.event.changes.base) }}
 
   concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,10 +20,7 @@ env:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    if: ${{ github.event.action == 'opened' ||
-      github.event.action == 'synchronize' ||
-      github.event.action == 'reopened' ||
-      (github.event.action == 'edited' && github.event.changes.base) }}
+    if: ${{ env.JOB_CONDITION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -40,10 +41,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    if: ${{ github.event.action == 'opened' ||
-      github.event.action == 'synchronize' ||
-      github.event.action == 'reopened' ||
-      (github.event.action == 'edited' && github.event.changes.base) }}
+    if: ${{ env.JOB_CONDITION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -64,10 +62,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.event.action == 'opened' ||
-      github.event.action == 'synchronize' ||
-      github.event.action == 'reopened' ||
-      (github.event.action == 'edited' && github.event.changes.base) }}
+    if: ${{ env.JOB_CONDITION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -87,10 +82,7 @@ jobs:
           pnpm nx affected --base=origin/$GIT_BASE_BRANCH --head=$GIT_HEAD_SHA -t build --parallel=3
   affected:
     runs-on: ubuntu-latest
-    if: ${{ github.event.action == 'opened' ||
-      github.event.action == 'synchronize' ||
-      github.event.action == 'reopened' ||
-      (github.event.action == 'edited' && github.event.changes.base) }}
+    if: ${{ env.JOB_CONDITION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
