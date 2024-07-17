@@ -3,7 +3,7 @@
 ## Purpose
 - To read affected result from another workflow.
 - Must need to use `affected/write` actions before other git workflow.
-- Use **ONLY PULL REQUEST EVENTS**.
+- Use **ONLY PULL REQUEST EVENTS**
 
 ## Inputs
 
