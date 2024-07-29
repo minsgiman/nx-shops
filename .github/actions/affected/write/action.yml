@@ -32,7 +32,7 @@ runs:
             const [, app] = releaseRegex.exec(baseBranch);
 
             console.log('Release app:', app);
-            core.exportVariable('AFFECTED_APPS', app);
+            core.exportVariable('AFFECTED_APPS', [app]);
 
             return;
           } else {
