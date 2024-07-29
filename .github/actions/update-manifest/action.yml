@@ -1,0 +1,64 @@
+name: Update Manifest
+description: Update manifest files for update docker image tag
+
+inputs:
+  phase:
+    description: 'Phase'
+    required: true
+  application_name:
+    description: 'Application name'
+    required: true
+  image_tag:
+    description: 'Docker image tag'
+    required: true
+
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: manifest
+        fetch-depth: 0
+    - name: Set up Git credentials
+      shell: bash
+      run: |
+        git config --local user.email "web_dev_bot@xxx.com"
+        git config --local user.name "web-dev-bot"
+    - name: Install yq
+      shell: bash
+      run: |
+        sudo wget https://github.com/mikefarah/yq/releases/download/v4.13.4/yq_linux_amd64 -O /usr/bin/yq
+        sudo chmod +x /usr/bin/yq
+        yq --version
+    -
+      name: Update values.yaml
+      shell: bash
+      run: |
+        yq e '.image.tag = "${{ inputs.image_tag }}"' -i "manifest/application/projects/${{ inputs.application_name}}/values.${{ inputs.phase }}.yaml"
+    - name: Check if there are changes
+      id: changes
+      shell: bash
+      run: |
+        if git diff --quiet; then
+          echo "CHANGES=0" >> $GITHUB_ENV
+          echo "No Changes. Same docker image tag already update on manifest."
+          echo "Skip Push flow"
+          exit 1
+        else
+          echo "CHANGES=1" >> $GITHUB_ENV
+        fi
+    - name: Push
+      if: env.CHANGES == '1'
+      shell: bash
+      run: |
+        git add manifest/application/projects/${{ inputs.application_name}}/values.${{ inputs.phase }}.yaml
+        git commit -m "[${{ inputs.phase }}] Update an image of the ${{ inputs.application_name}}-${{ inputs.phase }}"
+        git push origin manifest
+    - name: Checkout previous branch
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.sha }}
+        fetch-depth: 0
+
