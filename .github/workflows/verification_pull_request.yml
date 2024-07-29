@@ -1,4 +1,11 @@
-on: pull_request
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
 env:
   GIT_BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
   GIT_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
@@ -10,6 +17,9 @@ env:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    if: ${{ github.event.action == 'opened' ||
+      github.event.action == 'synchronize' ||
+      github.event.action == 'reopened' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -30,6 +40,9 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    if: ${{ github.event.action == 'opened' ||
+      github.event.action == 'synchronize' ||
+      github.event.action == 'reopened' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -50,6 +63,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    if: ${{ github.event.action == 'opened' ||
+      github.event.action == 'synchronize' ||
+      github.event.action == 'reopened' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -69,6 +85,10 @@ jobs:
           pnpm nx affected --base=origin/$GIT_BASE_BRANCH --head=$GIT_HEAD_SHA -t build --parallel=3
   affected:
     runs-on: ubuntu-latest
+    if: ${{ github.event.action == 'opened' ||
+      github.event.action == 'synchronize' ||
+      github.event.action == 'reopened' ||
+      (github.event.action == 'edited' && github.event.changes.base) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
