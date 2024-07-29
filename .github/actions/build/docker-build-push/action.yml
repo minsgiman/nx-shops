@@ -1,0 +1,55 @@
+name: Build and Push a docker image
+description: Build an docker image then push it to Docker Hub
+
+inputs:
+  user_name:
+    description: The name of a User who push an image to Docker Hub
+    required: true
+  user_password:
+    description: The password of a User who push an image to Docker Hub
+    required: true
+  registry:
+    description: Registry URL of image registry
+    required: true
+  registry_repository:
+    description: The repository of a User who push an image to Docker Hub
+    required: true
+  image_tag:
+    description: The tag of an image which is pushed to image registry
+    required: true
+  dockerfile_path:
+    description: The path of a Dockerfile which will be build
+    required: true
+  build_args:
+    description: The build args of an application which will be build
+    required: false
+
+runs:
+  using: composite
+  steps:
+    -
+      name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.registry }}
+        username: ${{ inputs.user_name }}
+        password: ${{ inputs.user_password }}
+
+    -
+      name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+        config-inline: |
+          [registry."docker.io"]
+            mirrors = ["docker-hub-mirror.xxx.com"]
+    -
+      name: Build and push
+      id: build-push
+      uses: docker/build-push-action@v6
+      with:
+        platforms: linux/amd64
+        file: ${{ inputs.dockerfile_path }}
+        push: true
+        context: .
+        tags: '${{ inputs.registry }}/${{ inputs.registry_repository }}:${{ inputs.image_tag }}'
+        build-args: ${{ inputs.build_args }}

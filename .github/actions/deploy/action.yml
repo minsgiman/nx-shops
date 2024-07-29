@@ -8,6 +8,9 @@ inputs:
   project:
     description: The project name
     required: true
+  docker_password:
+    description: secret for docker registry
+    required: true
 
 runs:
   using: composite
@@ -44,6 +47,27 @@ runs:
         DOCKER_TAG="${{ inputs.phase }}.${{ github.sha }}"
         echo "tag=$DOCKER_TAG" >> $GITHUB_ENV
         echo "tag=$DOCKER_TAG" >> $GITHUB_OUTPUT
-#    - name: Docker build & Push
-#    - name: Update manifest
+
+    - name: Docker build & Push
+      id: docker_build_push
+      if: env.end_early != 'true'
+      uses: ./.github/actions/build/docker-build-push
+      with:
+        user_name: user
+        user_password: ${{ inputs.docker_password }}
+        registry: xxx.com/xxx
+        registry_repository: cart
+        image_tag: ${{ steps.set_tag.outputs.tag }}
+        dockerfile_path: apps/${{ inputs.project }}/Dockerfile
+        build_args: |
+          NEXT_PUBLIC_PHASE=${{ inputs.phase }}
+          NEXT_PUBLIC_COMMIT_HASH=${{ github.sha }}
+
+    - name: Update manifest
+      if: env.end_early != 'true'
+      uses: ./.github/actions/update-manifest
+      with:
+        phase: ${{ inputs.phase }}
+        application_name: ${{ inputs.project }}
+        image_tag: ${{ steps.set_tag.outputs.tag }}
 
