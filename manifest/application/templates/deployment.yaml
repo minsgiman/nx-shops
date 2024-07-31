@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.application.name }}-deployment
+spec:
+  selector:
+    matchLabels:
+      labelName: {{ .Values.application.name }}-pods
+  template:
+    metadata:
+      labels:
+        labelName: {{ .Values.application.name }}-pods
+    spec:
+      {{ if .Values.deployment.nodeSelector }}
+      nodeSelector:
+        {{ toYaml .Values.deployment.nodeSelector | indent 8 }}
+      {{ end }}
+      containers:
+        - name: {{ .Values.application.name }}
+          image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.imagePullPolicy }}
+          {{ if .Values.deployment.resource }}
+          resources:
+            {{ if .Values.deployment.resource.requests }}
+            requests:
+              cpu: {{ .Values.deployment.resource.requests.cpu }}
+              memory: {{ .Values.deployment.resource.requests.memory }}
+            {{ end }}
+            {{ if .Values.deployment.resource.limits }}
+            limits:
+              cpu: {{ .Values.deployment.resource.limits.cpu }}
+              memory: {{ .Values.deployment.resource.limits.memory }}
+            {{ end }}
+          {{ end }}
+          ports:
+            - name: pods-port
+              containerPort: {{ .Values.deployment.containerPort }}
+              protocol: TCP
+          {{ if .Values.deployment.env }}
+          env:
+            {{- range .Values.deployment.env }}
+            - name: {{ .name }}
+              value: {{ .value }}
+              {{- if .valueFrom }}
+              valueFrom:
+                {{- if .valueFrom.secretKeyRef }}
+                secretKeyRef:
+                  name: {{ .valueFrom.secretKeyRef.name }}
+                  key: {{ .valueFrom.secretKeyRef.key }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+          {{ end }}
+          livenessProbe:
+            timeoutSeconds: 5
+            failureThreshold: 5
+            httpGet:
+              path: {{ .Values.deployment.livenessProbePath }}
+              port: pods-port
+          readinessProbe:
+            timeoutSeconds: 5
+            failureThreshold: 3
+            httpGet:
+              path: {{ .Values.deployment.livenessProbePath }}
+              port: pods-port
+          startupProbe:
+            httpGet:
+              path: {{ .Values.deployment.livenessProbePath }}
+              port: pods-port
+

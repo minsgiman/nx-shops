@@ -1,0 +1,42 @@
+# Common application setting
+application:
+  name: template
+
+# image config
+image:
+  name: template
+  tag: 1.0.0
+  imagePullPolicy: Always
+
+# ingress config
+ingress:
+  hosts:
+    - host: example.com
+      port: 80
+      path: /
+      pathType: Prefix
+
+# deployment config
+deployment:
+  containerPort: 3000
+  livenessProbePath: /api/monitor/l7check
+  env: []
+  nodeSelector: []
+  resource:
+    requests:
+      cpu: 1000m
+      memory: 2000Mi
+    limits:
+      cpu: 1000m
+      memory: 2000Mi
+
+# hpa config
+hpa:
+  minReplicas: 2
+  maxReplicas: 4
+  cpuAverage: 80
+  memoryAverage: 80
+
+# pdb config
+pdb:
+  maxUnavailable: 1

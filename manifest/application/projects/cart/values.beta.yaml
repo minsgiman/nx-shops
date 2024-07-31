@@ -1,0 +1,31 @@
+application:
+  name: cart
+image:
+  name: xxx.com/cart
+  tag: 1
+  imagePullPolicy: Always
+ingress:
+  hosts:
+    - host: cart.xxx-beta.com
+      port: 80
+      path: /
+      pathType: Prefix
+deployment:
+  containerPort: 4200
+  livenessProbePath: /api/l7check
+  nodeSelector:
+    xxx.com/nodepool: beta
+  resource:
+    requests:
+      cpu: 1150m
+      memory: 2300Mi
+    limits:
+      cpu: 1150m
+      memory: 2300Mi
+hpa:
+  minReplicas: 2
+  maxReplicas: 4
+  cpuAverage: 70
+  memoryAverage: 80
+pdb:
+  maxUnavailable: 1
