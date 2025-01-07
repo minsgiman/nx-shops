@@ -6,6 +6,10 @@ inputs:
   artifact_path:
     description: The path to the artifact
     required: true
+  use_exclude:
+    description: use exclude apps
+    required: false
+    default: 'true'
 
 runs:
   using: composite
@@ -35,7 +39,7 @@ runs:
             core.exportVariable('AFFECTED_APPS', [app]);
 
             return;
-          } else {
+          } else if ('${{ inputs.use_exclude }}' === 'true') {
             const { data: pulls = [] } = await github.rest.pulls.list({
               ...context.repo,
               state: 'open',
