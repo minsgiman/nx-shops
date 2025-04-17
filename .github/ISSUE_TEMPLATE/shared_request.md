@@ -1,64 +1,64 @@
 ---
-name: Shared libs RFC
-about: Suggest for shared libs modification
+name: Shared library Request
+about: Suggest for shared library modification
 title: ''
 labels: ''
 assignees: ''
 ---
 
-# Summary
+## Summary
 
 <!--
 - Brief explanation of the feature or modification.
 -->
 
-# Motivation
+## Motivation
 
 <!--
 - Why are we doing this? What use cases does it support? What is the expected
 outcome?
 -->
 
-# Detailed design (optional)
+## Detailed design (optional)
 
 <!--
 - If needs to share design structure, include a detailed description of the design
 -->
 
-# Affects other module
+## Affects other module
 
 <!--
 - Is there any breaking change? Is there any expected side effect of this change to other module?
 -->
 
-# Basic example (optional)
+## Basic example (optional)
 
 <!--
 - If the proposal involves a new or changed API, include a basic code example.
 -->
 
-# Alternatives (optional)
+## Alternatives (optional)
 
 <!--
 - Other alternative have been considered? What is the impact of not doing this?
 -->
 
-# How to test
+## How to test
 
 <!--
 - How can we test this? What are the edge cases?
 -->
 
-# Unresolved questions (optional)
+## Unresolved questions (optional)
 
 <!--
 - What parts are still TBD?
 -->
 
-# Reviewer
+## Reviewer
 
 <!--
 - Who will review this?
 -->
 
-# References
+## References
