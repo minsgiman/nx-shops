@@ -1,0 +1,57 @@
+name: 99. [CI] Automatic labelling
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled]
+
+jobs:
+  labelling:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update deploy labels on PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const baseBranch = '${{ github.event.pull_request.base.ref }}'
+            const { data: issueLabels = [] } = await github.rest.issues.listLabelsOnIssue({
+              ...context.repo,
+              issue_number: context.issue.number,
+            });
+
+            console.log('Read labels', issueLabels);
+
+            if (issueLabels.find(label => label.name === 'No Auto Deploy')) {
+              const deployLabels = issueLabels.filter(label => /DEPLOY:(?:BETA|RC)/.test(label.name))
+              
+              if (deployLabels.length === 0) {
+                return;
+              }
+
+              await Promise.all(deployLabels.map(deployLabel => github.rest.issues.removeLabel({
+                ...context.repo,
+                issue_number: context.issue.number,
+                name: deployLabel.name
+              })))
+
+              console.log(`Remove labels: (${deployLabels.map(label => label.name).join(', ')})`)
+            } else {
+              const labels = []
+              if (/^develop$|^(release|hotfix)\/.*/.test(baseBranch)) {
+                labels.push('DEPLOY:BETA')
+
+                if (baseBranch !== 'develop') {
+                  labels.push('DEPLOY:RC')
+                }
+              }
+
+              if (labels.length === 0) {
+                return;
+              }
+
+              await github.rest.issues.addLabels({
+                ...context.repo,
+                issue_number: context.issue.number,
+                labels
+              })
+
+              console.log(`Add labels: (${labels.join(', ')})`)
+            }

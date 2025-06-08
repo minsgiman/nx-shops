@@ -1,0 +1,96 @@
+name: 10. Create Release Branch and PR
+on:
+  workflow_dispatch:
+    inputs:
+      application:
+        description: 'Target Apps'
+        required: true
+        type: choice
+        options:
+          - 'cart'
+
+      type:
+        description: 'Release Type'
+        required: true
+        type: choice
+        options:
+          - regular
+          - irregular
+          - hotfix
+
+      version:
+        description: 'Application Release Version (x.y.z)'
+        required: true
+
+      base:
+        description: 'Base Branch'
+        default: 'main'
+        required: false
+
+      summary:
+        description: 'Summary of the PR'
+        required: false
+
+      link:
+        description: 'Add Link(wiki/jira) to the PR'
+        required: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.application }}-${{ inputs.version }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Information of Action
+        run: |
+          echo "Application: ${{ inputs.application }}"
+          echo "Releaes Type: ${{ inputs.type }}"
+          echo "Application version: ${{ inputs.version }}"
+          echo "Base Branch: ${{ inputs.base }}"
+          echo "Summary: ${{ inputs.summary }}"
+          echo "Link: ${{ inputs.link }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Actor: ${{ env.GITHUB_ACTOR }}"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Generate release branch name
+        id: info
+        run: |
+          if [ "${{ github.event.inputs.type }}" == "hotfix" ]; then
+            PREFIX="hotfix"
+          else
+            PREFIX="release"
+          fi
+          RELEASE_BRANCH="${PREFIX}/${{ inputs.application }}-${{ inputs.version }}" 
+          echo "Release Branch Name: ${RELEASE_BRANCH}"
+          echo "RELEASE_BRANCH=${RELEASE_BRANCH}" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        uses: ./.github/actions/create-pull-request
+        with:
+          branch: ${{ steps.info.outputs.RELEASE_BRANCH }}
+          base: ${{ inputs.base }}
+          title: 'Release ${{ inputs.application }}@${{ inputs.version }}'
+          body: |
+            ### ${{ inputs.application }}@${{ inputs.version }} ${{ inputs.type }} deployment
+            > This release branch is created from the \`${{ github.ref_name }}\` branch.
+
+            ${{ inputs.summary }}
+
+            ### Reference
+            ${{ inputs.link }}
+          labels: |
+            release
+            ${{ inputs.application }}
+          team-reviewers: '@WebDev/team'
+          draft: true
